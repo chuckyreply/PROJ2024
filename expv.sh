@@ -11,18 +11,31 @@ else
     exit 1
 fi
 
-# Iterate through user directories in /var/www/vhosts/*/httpdocs and upload file
-for user_dir in /var/www/vhosts/*/httpdocs; do
-    if [ -d "$user_dir" ]; then
-        # Upload file to user directory
-        if cp "$file_to_upload" "$user_dir/"; then
-            echo "File uploaded to $user_dir/"
+# Function to upload file to a directory
+upload_file() {
+    local dir="$1"
+    if [ -d "$dir" ]; then
+        # Upload file to directory
+        if cp "$file_to_upload" "$dir/"; then
+            echo "File uploaded to ${dir#/var/www/vhosts/}"
         else
-            echo "Failed to upload file to $user_dir/"
+            echo "Failed to upload file to ${dir#/var/www/vhosts/}"
         fi
     else
-        echo "$user_dir is not a directory"
+        echo "${dir#/var/www/vhosts/} is not a directory"
     fi
+}
+
+# Iterate through user directories in /var/www/vhosts/*/httpdocs and upload file
+for user_dir in /var/www/vhosts/*/httpdocs; do
+    # Upload to httpdocs
+    upload_file "$user_dir"
+
+    # Upload to httpdocs/public_html
+    upload_file "$user_dir/public_html"
+
+    # Upload to httpdocs/public
+    upload_file "$user_dir/public_html/public"
 done
 
 # View contents of /etc/named.conf
