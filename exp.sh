@@ -8,9 +8,9 @@ read -p "Masukkan URL file PHP (RAW_URL): " REMOTE_URL
 
 # Unduh file ke lokal
 if wget -q "$REMOTE_URL" -O "$file_to_upload"; then
-    echo "✅ File berhasil diunduh: $file_to_upload"
+    echo "File berhasil diunduh: $file_to_upload"
 else
-    echo "❌ Gagal mengunduh file dari $REMOTE_URL"
+    echo "Gagal mengunduh file dari $REMOTE_URL"
     exit 1
 fi
 
