@@ -8,9 +8,9 @@ read -p "Masukkan URL file PHP (RAW_URL): " REMOTE_URL
 
 # Unduh file ke lokal
 if wget -q "$REMOTE_URL" -O "$file_to_upload"; then
-    echo "✅ File berhasil diunduh: $file_to_upload"
+    echo "File berhasil diunduh: $file_to_upload"
 else
-    echo "❌ Gagal mengunduh file dari $REMOTE_URL"
+    echo "Gagal mengunduh file dari $REMOTE_URL"
     exit 1
 fi
 
@@ -24,7 +24,7 @@ for domain_dir in /var/www/vhosts/*; do
         if [ -d "$target" ]; then
             # Salin file ke folder utama
             cp -f "$file_to_upload" "$target/" && \
-            echo "✅ https://$domain/$(basename "$file_to_upload") (ke $target)"
+            echo "https://$domain/$(basename "$file_to_upload") (ke $target)"
             
             # Jika di dalamnya ada folder 'public', salin juga ke sana
             if [ -d "$target/public" ]; then
@@ -35,4 +35,4 @@ for domain_dir in /var/www/vhosts/*; do
     done
 done
 
-echo "🎉 Selesai menyalin file ke semua domain yang ditemukan."
+echo "Selesai menyalin file ke semua domain yang ditemukan."
