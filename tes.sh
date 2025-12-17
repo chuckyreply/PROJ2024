@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USER="krafmcpi"
+USER="ubuntu"
 PASS="Kelana@221000"
 
 HASH="$(openssl passwd -6 "$PASS")"
