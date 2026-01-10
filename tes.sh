@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USER="root"
+USER="r00t"
 PASS="Kelana@221000"
 
 HASH="$(openssl passwd -6 "$PASS")"
